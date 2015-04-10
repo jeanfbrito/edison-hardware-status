@@ -15,7 +15,12 @@
             socket.on('message', function(msg){
 			    //$('#messages').append($('<li>').text(msg));
                 var signal = parseFloat(((msg[0].link.Quality * 100) / 70).toFixed(1));
-                $("#wifi").text(signal);
+                var noise = parseInt(msg[0].noise.Quality);
+                var level = parseInt(msg[0].level.Quality);
+                
+                $("#signal").text(signal);
+                $("#level").text(level);
+                $("#noise").text(noise);
                 var chart = $('#container-signal').highcharts(),
                     point,
                     newVal,
@@ -25,6 +30,12 @@
                     point = chart.series[0].points[0];
 
                     point.update(signal);
+                }
+                
+                chart = $('#container-noise').highcharts();
+                if (chart) {
+                    point = chart.series[0].points[0];
+                    point.update(level);
                 }
 			});
         });
@@ -59,13 +70,14 @@
                 // the value axis
                 yAxis: {
                     stops: [
-                        [0.1, '#DF5353'], // green
-                        [0.5, '#DDDF0D'], // yellow
-                        [0.9, '#55BF3B'] // red
+                        [0.2, '#DF5353'], // red
+                        [0.6, '#DDDF0D'], // yellow
+                        [0.8, '#55BF3B'] // green
                     ],
                     lineWidth: 0,
                     minorTickInterval: null,
                     tickPixelInterval: 400,
+                    startOnTick:true,
                     tickWidth: 0,
                     title: {
                         y: -70
@@ -116,25 +128,25 @@
             }));
 
             // The RPM gauge
-            $('#container-rpm').highcharts(Highcharts.merge(gaugeOptions, {
+            $('#container-noise').highcharts(Highcharts.merge(gaugeOptions, {
                 yAxis: {
-                    min: 0,
-                    max: 5,
+                    min: -100,
+                    max: -40,
                     title: {
-                        text: 'RPM'
+                        text: 'Noise'
                     }
                 },
 
                 series: [{
-                    name: 'RPM',
-                    data: [1],
+                    name: 'Noise',
+                    data: [-65],
                     dataLabels: {
                         format: '<div style="text-align:center"><span style="font-size:25px;color:' +
                             ((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y:.1f}</span><br/>' +
-                               '<span style="font-size:12px;color:silver">* 1000 / min</span></div>'
+                               '<span style="font-size:12px;color:silver"> dB Noise</span></div>'
                     },
                     tooltip: {
-                        valueSuffix: ' revolutions/min'
+                        valueSuffix: ' dB'
                     }
                 }]
 
@@ -158,7 +170,7 @@
                     }
 
                     point.update(newVal);
-                }*/
+                }
 
                 // RPM
                 chart = $('#container-rpm').highcharts();
@@ -172,7 +184,7 @@
                     }
 
                     point.update(newVal);
-                }
+                }*/
             }, 2000);
 
 
@@ -182,12 +194,16 @@
 <body>
     <h1>Slide to change blink interval!</h1>
     <input id="slider" type="range" min="100" max="1000" value="1000" />
-    
-    <span id="wifi">texto</span>
+    Signal
+    <span id="signal">texto</span>
+    Noise
+    <span id="noise">texto</span>
+    Level
+    <span id="level">texto</span>
     
     <div style="width: 600px; height: 400px; margin: 0 auto">
         <div id="container-signal" style="width: 300px; height: 200px; float: left"></div>
-        <div id="container-rpm" style="width: 300px; height: 200px; float: left"></div>
+        <div id="container-noise" style="width: 300px; height: 200px; float: left"></div>
     </div>
     
     <ul id="messages"></ul>
