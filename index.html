@@ -9,10 +9,9 @@
                 socket.emit('changeBlinkInterval',$(this).val());
             });
             socket.on('message', function(msg){
-			    $('#messages').append($('<li>').text(msg));
-                $("#wifi").text(msg);
-                console.log(msg);
-                console.log(msg);
+			    //$('#messages').append($('<li>').text(msg));
+                var signal = (msg[0].link.Quality * 100) / 70;
+                $("#wifi").text(signal);
 			});
         });
     </script>

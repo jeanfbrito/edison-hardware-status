@@ -36,7 +36,6 @@ function blink(){
 function info() {
     procfs.wifi(function(err,data){
         //data = JSON.stringify(data);
-        console.log(data['Interface']);
         io.sockets.emit('message', data);
       });
 }
@@ -44,4 +43,4 @@ function info() {
 setInterval(function() {   
     //io.sockets.emit('message', wifi);
     info();
-}, 500);
+}, 1000);
